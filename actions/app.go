@@ -1,14 +1,19 @@
 package actions
 
 import (
+	"bytes"
+	"encoding/gob"
+	"log"
+	"net/http"
+
 	"github.com/gobuffalo/buffalo"
 	"github.com/gobuffalo/buffalo/middleware"
 	"github.com/gobuffalo/buffalo/middleware/ssl"
 	"github.com/gobuffalo/envy"
+	"github.com/isomorphicgo/isokit"
 	"github.com/unrolled/secure"
 
 	"github.com/bketelsen/testbuffalo/models"
-	"github.com/gobuffalo/buffalo/middleware/csrf"
 	"github.com/gobuffalo/buffalo/middleware/i18n"
 	"github.com/gobuffalo/packr"
 )
@@ -40,7 +45,7 @@ func App() *buffalo.App {
 
 		// Protect against CSRF attacks. https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
 		// Remove to disable this.
-		app.Use(csrf.New)
+		//app.Use(csrf.New)
 
 		// Wraps each request in a transaction.
 		//  c.Value("tx").(*pop.PopTransaction)
@@ -53,11 +58,31 @@ func App() *buffalo.App {
 			app.Stop(err)
 		}
 		app.Use(T.Middleware())
-
+		app.ANY("/template-bundle", buffalo.WrapHandlerFunc(TemplateBundleHandler()))
+		app.GET("/js/client.js", buffalo.WrapHandler(isokit.GopherjsScriptHandler(WebAppRoot)))
+		app.GET("/js/client.js.map", buffalo.WrapHandler(isokit.GopherjsScriptMapHandler(WebAppRoot)))
 		app.GET("/", HomeHandler)
 
+		app.GET("/index", HomeHandler)
+		app.GET("/about", AboutHandler)
 		app.ServeFiles("/assets", assetsBox)
 	}
 
 	return app
+}
+
+func TemplateBundleHandler() http.HandlerFunc {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var templateContentItemsBuffer bytes.Buffer
+		enc := gob.NewEncoder(&templateContentItemsBuffer)
+		m := ts.Bundle().Items()
+		err := enc.Encode(&m)
+		if err != nil {
+			log.Print("encoding err: ", err)
+		}
+		w.Header().Set("Content-Type", "application/octet-stream")
+		w.WriteHeader(http.StatusOK)
+		w.Write(templateContentItemsBuffer.Bytes())
+	})
+
 }

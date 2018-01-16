@@ -1,0 +1,21 @@
+<head>
+	<meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>{{.page.PageTitle}}</title>	
+	<link rel="icon" type="image/png" href="/assets/images/isomorphic_go_icon.png">
+	<link rel="stylesheet" href="/assets/css/pure.min.css">
+	{{if productionmode}}
+	<link rel="stylesheet" type="text/css" href="/assets/css/cogimports.min.css">
+	<link rel="stylesheet" type="text/css" href="/assets/css/igweb.min.css">
+	<script type="text/javascript" src="/assets/js/client.min.js" async></script>
+	<script src="/assets/js/cogimports.min.js" type="text/javascript" async></script>
+	{{else}}
+	<link rel="stylesheet" type="text/css" href="/assets/css/cogimports.css">
+	<link rel="stylesheet" type="text/css" href="/assets/css/igweb.css">
+	<script src="/assets/js/cogimports.js" type="text/javascript" async></script>
+	<script type="text/javascript" src="/js/client.js" async></script>
+	{{end}}
+</head>
+<body>
+
+<div id="topbar">{{template "partials/topbar_partial"}}</div>
+<div id="navbar">{{template "partials/navbar_partial"}}</div>
