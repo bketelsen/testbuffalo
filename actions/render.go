@@ -24,7 +24,7 @@ func init() {
 
 	WebAppRoot = os.Getenv("IGWEB_APP_ROOT")
 
-	StaticAssetsPath = WebAppRoot + "/public/assets"
+	StaticAssetsPath = WebAppRoot + "/assets"
 	initializeTemplateSet()
 	initializeCogs(ts) // Register Handlers for Client-Side JavaScript Application
 }
@@ -34,7 +34,7 @@ func initializeTemplateSet() {
 	isokit.WebAppRoot = WebAppRoot
 	isokit.TemplateFilesPath = WebAppRoot + "/shared/templates"
 	isokit.StaticAssetsPath = StaticAssetsPath
-	isokit.StaticTemplateBundleFilePath = StaticAssetsPath + "/templates/igweb.tmplbundle"
+	isokit.StaticTemplateBundleFilePath = WebAppRoot + "/public/templates/igweb.tmplbundle"
 
 	/*
 		if ENV == "production" && oneTimeStaticAssetsGeneration == false {
